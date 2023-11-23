@@ -1,7 +1,8 @@
-// @ts-ignore
+import fs from 'fs'
 import type { Helia } from '@helia/interface'
 import { CID } from 'multiformats/cid'
 import Application from '@ioc:Adonis/Core/Application'
+import Env from '@ioc:Adonis/Core/Env'
 
 class IFPS {
   private _setup: boolean = false
@@ -36,8 +37,17 @@ class IFPS {
       await eval(`import('libp2p/identify')`),
     ])
 
-    const blockstore = new FsBlockstore(Application.tmpPath('block'))
-    const datastore = new FsDatastore(Application.tmpPath('data'))
+    // Get storage path
+    const blockPath = Application.makePath(Env.get('IPFS_FS_PATH') + '/block')
+    const dataPath = Application.makePath(Env.get('IPFS_FS_PATH') + '/data')
+
+    // Ensure directories exist
+    if (!fs.existsSync(blockPath)) fs.mkdirSync(blockPath, { recursive: true })
+    if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath, { recursive: true })
+
+    // Initialize storage
+    const blockstore = new FsBlockstore(blockPath)
+    const datastore = new FsDatastore(dataPath)
 
     const libp2p = await createLibp2p({
       datastore,

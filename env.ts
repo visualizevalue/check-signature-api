@@ -36,6 +36,9 @@ export default Env.rules({
   PG_PASSWORD: Env.schema.string.optional(),
   PG_DB_NAME: Env.schema.string(),
 
+  // IPFS
+  IPFS_FS_PATH: Env.schema.string(),
+
   // Ethereum
   RPC_PROVIDER: Env.schema.string(),
   UPDATE_ENS: Env.schema.boolean(),

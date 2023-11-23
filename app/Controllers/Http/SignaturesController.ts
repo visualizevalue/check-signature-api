@@ -46,7 +46,7 @@ export default class SignaturesController {
       limit = 24,
     } = request.qs()
 
-    const query = Signature.query()
+    const query = Signature.query().preload('signerAccount')
 
     query.orderBy('created_at', 'desc')
 

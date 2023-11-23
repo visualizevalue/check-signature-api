@@ -28,10 +28,10 @@ export default class Signature extends BaseModel {
   public createdAt: DateTime
 
   @belongsTo(() => Account, {
-    localKey: 'signer',
-    foreignKey: 'address',
+    localKey: 'address',
+    foreignKey: 'signer',
   })
-  public signatures: BelongsTo<typeof Account>
+  public signerAccount: BelongsTo<typeof Account>
 
   @beforeSave()
   public static async lowerCaseAddress(signature: Signature) {

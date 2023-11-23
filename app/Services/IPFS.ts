@@ -1,6 +1,8 @@
 // @ts-ignore
 import type { Helia } from '@helia/interface'
 import { CID } from 'multiformats/cid'
+import Application from '@ioc:Adonis/Core/Application'
+import Env from '@ioc:Adonis/Core/Env'
 
 class IFPS {
   private _setup: boolean = false
@@ -13,12 +15,23 @@ class IFPS {
     const [
       { createHelia },
       { json },
+      { FsBlockstore },
+      { FsDatastore },
     ] = await Promise.all([
-      await eval(`import('helia')`), // FIXME: Proper ESM imports
-      await eval(`import('@helia/json')`), // FIXME: Proper ESM imports
+      // FIXME: Proper ESM imports
+      await eval(`import('helia')`),
+      await eval(`import('@helia/json')`),
+      await eval(`import('blockstore-fs')`),
+      await eval(`import('datastore-fs')`),
     ])
 
-    const helia = await createHelia()
+    const blockstore = new FsBlockstore(Application.tmpPath('block'))
+    const datastore = new FsDatastore(Application.tmpPath('data'))
+
+    const helia = await createHelia({
+      blockstore,
+      datastore,
+    })
 
     this.helia = helia
     this.json = json(helia)

@@ -3,8 +3,6 @@ import type { Helia } from '@helia/interface'
 import { CID } from 'multiformats/cid'
 import Env from '@ioc:Adonis/Core/Env'
 import s3Client from './S3Client'
-import { S3Datastore } from './JSStore/S3DataStore'
-import { S3Blockstore } from './JSStore/S3BlockStore'
 
 class IFPS {
   private _setup: boolean = false
@@ -17,16 +15,23 @@ class IFPS {
     const [
       { createHelia },
       { json },
+      // { S3Blockstore },
+      { S3Datastore },
     ] = await Promise.all([
-      await eval(`import('helia')`), // FIXME: Proper ESM imports
-      await eval(`import('@helia/json')`), // FIXME: Proper ESM imports
+      // FIXME: Proper ESM imports
+      await eval(`import('helia')`),
+      await eval(`import('@helia/json')`),
+      // await eval(`import('blockstore-s3')`),
+      await eval(`import('datastore-s3')`),
     ])
 
-    const datastore = new S3Datastore(s3Client, Env.get('S3_BUCKET'))
-    const blockstore = new S3Blockstore(s3Client, Env.get('S3_BUCKET'))
+    // const blockstore = new S3Blockstore(s3Client, Env.get('S3_BUCKET'))
+    const datastore = new S3Datastore(s3Client, Env.get('S3_BUCKET'), {
+      path: 'data',
+    })
 
     const helia = await createHelia({
-      blockstore,
+      // blockstore,
       datastore,
     })
 

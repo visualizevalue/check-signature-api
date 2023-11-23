@@ -20,6 +20,19 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+Route.get('/', async () => ({ check: 'signatures', version: 'v1' }))
+
+Route.group(() => {
+
+  Route.group(() => {
+    Route.get('/:account',                  'AccountsController.show')
+    Route.get('/:account/signatures',       'SignaturesController.forAccount')
+  }).prefix('/accounts')
+
+  Route.group(() => {
+    Route.post('/',                         'SignaturesController.create')
+    Route.get('/',                          'SignaturesController.list')
+    Route.get('/:cid',                      'SignaturesController.show')
+  }).prefix('/signatures')
+
+}).prefix('/v1')

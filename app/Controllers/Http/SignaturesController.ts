@@ -54,7 +54,7 @@ export default class SignaturesController {
   }
 
   public async show({ params }: HttpContextContract) {
-    return Signature.findOrFail(params.cid)
+    return Signature.byId(params.cid).firstOrFail()
   }
 
 }

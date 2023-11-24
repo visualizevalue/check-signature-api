@@ -7,6 +7,9 @@ export default class Signature extends BaseModel {
   public cid: string
 
   @column()
+  public id: string
+
+  @column()
   public signer: string
 
   @column()
@@ -33,6 +36,16 @@ export default class Signature extends BaseModel {
   })
   public signerAccount: BelongsTo<typeof Account>
 
+  public shortendCID () {
+    this.id = this.cid.substring(9, 18)
+    return this
+  }
+
+  @beforeSave()
+  public static async shortenCID(signature: Signature) {
+    signature.shortendCID()
+  }
+
   @beforeSave()
   public static async lowerCaseAddress(signature: Signature) {
     // Lowercase addresses
@@ -42,6 +55,12 @@ export default class Signature extends BaseModel {
     // Save accounts
     const addresses = [signature.signer, ...signature.subjects]
     await Promise.all(addresses.map(address => Account.updateOrCreate({ address }, {})))
+  }
+
+  static byId (id: string) {
+    return this.query()
+      .where('id', id)
+      .orWhere('cid', id)
   }
 
 }

@@ -20,7 +20,7 @@ class IFPS {
       { noise },
       { yamux },
       { bootstrap },
-      { tcp },
+      { webSockets },
       { createLibp2p },
       { identifyService },
     ] = await Promise.all([
@@ -32,7 +32,7 @@ class IFPS {
       await eval(`import('@chainsafe/libp2p-noise')`),
       await eval(`import('@chainsafe/libp2p-yamux')`),
       await eval(`import('@libp2p/bootstrap')`),
-      await eval(`import('@libp2p/tcp')`),
+      await eval(`import('@libp2p/webSockets')`),
       await eval(`import('libp2p')`),
       await eval(`import('libp2p/identify')`),
     ])
@@ -51,13 +51,8 @@ class IFPS {
 
     const libp2p = await createLibp2p({
       datastore,
-      addresses: {
-        listen: [
-          '/ip4/127.0.0.1/tcp/0'
-        ]
-      },
       transports: [
-        tcp()
+        webSockets()
       ],
       connectionEncryption: [
         noise()
@@ -72,7 +67,6 @@ class IFPS {
             '/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
             '/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
             '/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt',
-            '/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
           ]
         })
       ],

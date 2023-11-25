@@ -17,26 +17,12 @@ class IFPS {
       { json },
       { FsBlockstore },
       { FsDatastore },
-      { noise },
-      { yamux },
-      { bootstrap },
-      { tcp },
-      { webSockets },
-      { createLibp2p },
-      { identifyService },
     ] = await Promise.all([
       // FIXME: Proper ESM imports
       await eval(`import('helia')`),
       await eval(`import('@helia/json')`),
       await eval(`import('blockstore-fs')`),
       await eval(`import('datastore-fs')`),
-      await eval(`import('@chainsafe/libp2p-noise')`),
-      await eval(`import('@chainsafe/libp2p-yamux')`),
-      await eval(`import('@libp2p/bootstrap')`),
-      await eval(`import('@libp2p/tcp')`),
-      await eval(`import('@libp2p/websockets')`),
-      await eval(`import('libp2p')`),
-      await eval(`import('libp2p/identify')`),
     ])
 
     // Get storage path
@@ -51,37 +37,9 @@ class IFPS {
     const blockstore = new FsBlockstore(blockPath)
     const datastore = new FsDatastore(dataPath)
 
-    const libp2p = await createLibp2p({
-      datastore,
-      transports: [
-        tcp(),
-        webSockets(),
-      ],
-      connectionEncryption: [
-        noise()
-      ],
-      streamMuxers: [
-        yamux()
-      ],
-      peerDiscovery: [
-        bootstrap({
-          list: [
-            '/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-            '/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
-            '/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
-            '/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt',
-          ]
-        })
-      ],
-      services: {
-        identify: identifyService()
-      }
-    })
-
     const helia = await createHelia({
       blockstore,
       datastore,
-      libp2p,
     })
 
     this.helia = helia

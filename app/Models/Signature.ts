@@ -53,7 +53,7 @@ export default class Signature extends BaseModel {
     signature.subjects = signature.subjects.map(s => s.toLowerCase())
 
     // Save accounts
-    const addresses = [signature.signer, ...signature.subjects]
+    const addresses = Array.from(new Set([signature.signer, ...signature.subjects]))
     await Promise.all(addresses.map(address => Account.updateOrCreate({ address }, {})))
   }
 

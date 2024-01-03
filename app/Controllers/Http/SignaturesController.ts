@@ -3,6 +3,7 @@ import Account from 'App/Models/Account'
 import Signature from 'App/Models/Signature'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import IPFS from 'App/Services/IPFS'
+import BaseController from './BaseController'
 
 const signatureSchema = schema.create({
   signer: schema.string([rules.address()]),
@@ -12,7 +13,7 @@ const signatureSchema = schema.create({
   object: schema.string(),
 })
 
-export default class SignaturesController {
+export default class SignaturesController extends BaseController {
 
   public async create({ request }: HttpContextContract) {
     const data = await request.validate({ schema: signatureSchema })
@@ -44,9 +45,12 @@ export default class SignaturesController {
     const {
       page = 1,
       limit = 24,
+      filters = {},
     } = request.qs()
 
     const query = Signature.query().preload('signerAccount')
+
+    this.applyFilters(query, filters)
 
     query.orderBy('created_at', 'desc')
 

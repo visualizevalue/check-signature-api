@@ -52,10 +52,11 @@ class IFPS {
 
     const cid = await this.json.add(data)
 
-    // Do asyncronously
-    try {
-      setTimeout(async () => await this.helia.pins.add(cid), 10)
-    } catch (e) {}
+    // FIXME: Was too intense...
+    // // Do asyncronously
+    // try {
+    //   setTimeout(async () => await this.helia.pins.add(cid), 10)
+    // } catch (e) {}
 
     return cid
   }

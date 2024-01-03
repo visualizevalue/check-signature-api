@@ -26,8 +26,6 @@ export default class BaseController {
               : `${where}Null`
             : where
 
-          console.log(whereQuery, `${query.model.table}.${key}`, v)
-
           q[whereQuery](`${query.model.table}.${key}`, v)
         })
       })

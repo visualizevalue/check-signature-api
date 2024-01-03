@@ -10,8 +10,6 @@ export default class BaseController {
 
   protected applyFilters (query, filters) {
     Object.entries(filters).forEach(([key, value]) => {
-      console.log(key, value)
-
       const values = Array.isArray(value) ? value : [`${value}`]
 
       query.where(q => {

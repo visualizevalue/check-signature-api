@@ -2,8 +2,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Account from 'App/Models/Account'
 import Signature from 'App/Models/Signature'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
-import IPFS from 'App/Services/IPFS'
 import BaseController from './BaseController'
+import CID from 'App/Services/CID'
 
 const signatureSchema = schema.create({
   signer: schema.string([rules.address()]),
@@ -18,7 +18,7 @@ export default class SignaturesController extends BaseController {
   public async create({ request }: HttpContextContract) {
     const data = await request.validate({ schema: signatureSchema })
 
-    const cid = await IPFS.addJson(data)
+    const cid = await CID.getJsonCID(data)
 
     return await Signature.updateOrCreate({ cid: cid.toString() }, data)
   }

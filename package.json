@@ -30,6 +30,7 @@
     "ethers": "^6.8.1",
     "helia": "^2.1.0",
     "luxon": "^3.4.4",
+    "multiformats": "^13.0.0",
     "pg": "^8.11.3",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",

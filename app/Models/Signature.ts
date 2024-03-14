@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, beforeSave, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import Account from './Account'
+import Account from 'App/Models/Account'
+import SignatureSchema from 'App/Models/SignatureSchema'
 
 export default class Signature extends BaseModel {
   @column({ isPrimary: true })
@@ -8,6 +9,9 @@ export default class Signature extends BaseModel {
 
   @column()
   public id: string
+
+  @column({ serializeAs: null })
+  public schema: number
 
   @column()
   public signer: string
@@ -25,7 +29,7 @@ export default class Signature extends BaseModel {
   public action: string
 
   @column()
-  public object: string
+  public object: string|{[key:string]: any}
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -35,6 +39,11 @@ export default class Signature extends BaseModel {
     foreignKey: 'signer',
   })
   public signerAccount: BelongsTo<typeof Account>
+
+  @belongsTo(() => SignatureSchema, {
+    foreignKey: 'schema',
+  })
+  public signatureSchema: BelongsTo<typeof SignatureSchema>
 
   public shortendCID () {
     this.id = this.cid.substring(9, 18)

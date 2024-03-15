@@ -11,7 +11,7 @@ const signatureSchema = schema.create({
   signature: schema.string(),
   subjects: schema.array().members(schema.string([rules.address()])),
   action: schema.string(),
-  object: schema.object().anyMembers(),
+  object: schema.string(),
   schema: schema.object.optional().members({
     name: schema.string(),
     version: schema.string(),

@@ -35,4 +35,8 @@ Route.group(() => {
     Route.get('/:cid',                      'SignaturesController.show')
   }).prefix('/signatures')
 
+  Route.group(() => {
+    Route.get('/',                          'HandwrittenMarksController.list')
+  }).prefix('/handwritten-marks')
+
 }).prefix('/v1')

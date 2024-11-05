@@ -6,7 +6,6 @@ export const MAX_BLOCK_QUERY = 2000
 
 const PROVIDERS = {
   1: new JsonRpcProvider(Env.get('RPC_PROVIDER'), 1),
-  5: new JsonRpcProvider(Env.get('RPC_PROVIDER_GOERLI'), 5),
 }
 
 const BLOCK_CACHE = {}

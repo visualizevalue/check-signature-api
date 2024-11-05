@@ -42,4 +42,6 @@ export default Env.rules({
   // Ethereum
   RPC_PROVIDER: Env.schema.string(),
   UPDATE_ENS: Env.schema.boolean(),
+  SIGNATURE_REPOSITORY_START_BLOCK: Env.schema.number(),
+  SIGNATURE_REPOSITORY_ADDRESS: Env.schema.string(),
 })

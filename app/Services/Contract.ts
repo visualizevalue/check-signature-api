@@ -1,4 +1,4 @@
-import { ethers, Event } from 'ethers'
+import { Contract as EthersContract, EventLog, Log } from 'ethers'
 import Logger from '@ioc:Adonis/Core/Logger'
 import provider, { MAX_BLOCK_QUERY } from '../Services/RPCProvider'
 import { delay } from 'App/Helpers/time'
@@ -6,26 +6,31 @@ import { delay } from 'App/Helpers/time'
 const BLOCKS_PER_WEEK = Math.floor(60 * 60 * 24 * 7 / 13)
 
 export default abstract class Contract {
-  protected contract: ethers.Contract
+  protected contract: EthersContract
 
-  public async syncEvents (startBlock: number, eventType: string, onEvent: Function): Promise<ethers.BigNumber> {
-    const lastSynched = ethers.BigNumber.from(startBlock)
-    let latestBlock
+  public async syncEvents(
+    startBlock: number,
+    eventType: string,
+    onEvent: Function
+  ): Promise<bigint> {
+    const lastSynched = BigInt(startBlock)
+    let latestBlock: bigint
+
     try {
-      latestBlock = ethers.BigNumber.from(await provider.getBlockNumber())
+      latestBlock = BigInt(await provider.getBlockNumber())
     } catch (e) {
       Logger.error(e)
-      Logger.warn(`Waiting 5 seconds and trying again`)
+      Logger.warn('Waiting 5 seconds and trying again')
       await delay(5_000)
       return this.syncEvents(startBlock, eventType, onEvent)
     }
 
-    const toBlock: ethers.BigNumber = latestBlock.gt(lastSynched.add(BLOCKS_PER_WEEK))
-      ? lastSynched.add(BLOCKS_PER_WEEK)
+    const toBlock: bigint = latestBlock > lastSynched + BigInt(BLOCKS_PER_WEEK)
+      ? lastSynched + BigInt(BLOCKS_PER_WEEK)
       : latestBlock
 
-    const fromBlockTag = lastSynched.toHexString()
-    const toBlockTag = toBlock.eq(latestBlock) ? 'latest' : toBlock.toHexString()
+    const fromBlockTag = `0x${lastSynched.toString(16)}`
+    const toBlockTag = toBlock === latestBlock ? 'latest' : `0x${toBlock.toString(16)}`
 
     // Store events
     const [events, until] = await this.fetchEvents(fromBlockTag, toBlockTag, eventType)
@@ -33,36 +38,45 @@ export default abstract class Contract {
       await onEvent.call(this, event)
     }
 
-    const syncedUntil = (until.gt(0) && until.lt(toBlock)) ? until : toBlock
-    Logger.info(`Synched ${eventType} events to block ${syncedUntil?.toNumber() || 'latest'}; Found ${events.length} events.`)
+    const syncedUntil = (until > 0n && until < toBlock) ? until : toBlock
+    Logger.info(
+      `Synched ${eventType} events from ${startBlock} to block ${
+        syncedUntil === latestBlock ? 'latest' : syncedUntil.toString()
+      }; Found ${events.length} events.`
+    )
 
     // If we're not fully synched up, continue synching
     if (toBlockTag !== 'latest') {
-     return await this.syncEvents(syncedUntil.toNumber(), eventType, onEvent)
+      return await this.syncEvents(Number(syncedUntil), eventType, onEvent)
     }
 
     return syncedUntil
   }
 
-  protected async fetchEvents (fromBlockTag, toBlockTag, eventType): Promise<[Event[], ethers.BigNumber]> {
-    let events: Event[] = []
-    let until: ethers.BigNumber = ethers.BigNumber.from(0)
+  protected async fetchEvents(
+    fromBlockTag: string,
+    toBlockTag: string | 'latest',
+    eventType: string
+  ): Promise<[(EventLog | Log)[], bigint]> {
+    let events: (EventLog | Log)[] = []
+    let until: bigint = 0n
+
     try {
       events = await this.contract.queryFilter(eventType, fromBlockTag, toBlockTag)
     } catch (e) {
       try {
         // Try the max of 2000 blocks
-        until = ethers.BigNumber.from(fromBlockTag).add(MAX_BLOCK_QUERY)
+        until = BigInt(fromBlockTag) + BigInt(MAX_BLOCK_QUERY)
         Logger.info(`Failed on ${toBlockTag}; Trying 2000 blocks until ${until.toString()}`)
-        events = await this.contract.queryFilter(eventType, fromBlockTag, until.toHexString())
+        events = await this.contract.queryFilter(
+          eventType,
+          fromBlockTag,
+          `0x${until.toString(16)}`
+        )
       } catch (e) {
         Logger.error(e)
       }
     }
     return [events, until]
-  }
-
-  public ownerOf (tokenId: number): Promise<string> {
-    return this.contract.ownerOf(tokenId)
   }
 }

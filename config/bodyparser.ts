@@ -202,9 +202,9 @@ const bodyParserConfig: BodyParserConfig = {
     | The types that will be considered and parsed as multipart body.
     |
     */
-    types: [
-      'multipart/form-data',
-    ],
+    // This JSON API has no upload endpoints. Keep the unsupported multipart
+    // parser disabled while AdonisJS 5 is maintained.
+    types: [],
   },
 }
 

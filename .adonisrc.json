@@ -1,5 +1,11 @@
 {
   "typescript": true,
+  "commands": [
+    "./commands",
+    "@adonisjs/core/build/commands/index.js",
+    "@adonisjs/repl/build/commands",
+    "@adonisjs/lucid/build/commands"
+  ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
     "App": "app",
@@ -8,17 +14,17 @@
     "Contracts": "contracts"
   },
   "preloads": [
-    "./start/routes.js",
-    "./start/kernel.js",
+    "./start/routes",
+    "./start/kernel",
     {
-      "file": "./start/validator.js",
+      "file": "./start/validator",
       "environment": [
         "web"
       ]
     }
   ],
   "providers": [
-    "./providers/AppProvider.js",
+    "./providers/AppProvider",
     "@adonisjs/core",
     "@adonisjs/lucid"
   ],

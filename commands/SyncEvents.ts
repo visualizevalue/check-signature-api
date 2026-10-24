@@ -1,24 +1,24 @@
-import { BaseCommand } from '@adonisjs/core/ace'
-import env from '@adonisjs/core/services/env'
-import SignatureRepository from '../app/Services/SignatureRepository.js'
+import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Env from '@ioc:Adonis/Core/Env'
+import SignatureRepository from 'App/Services/SignatureRepository';
 
 export default class SyncEvents extends BaseCommand {
   /**
    * Command name is used to run the command
    */
-  static commandName = 'sync:events'
+  public static commandName = 'sync:events'
 
   /**
    * Command description is displayed in the "help" output
    */
-  static description = ''
+  public static description = ''
 
-  static options = {
+  public static settings = {
     loadApp: true,
-    staysAlive: false,
+    stayAlive: false,
   }
 
-  async run() {
-    await (await SignatureRepository.initialize(env.get('SIGNATURE_REPOSITORY_ADDRESS'))).sync()
+  public async run() {
+    await (await SignatureRepository.initialize(Env.get('SIGNATURE_REPOSITORY_ADDRESS'))).sync()
   }
 }

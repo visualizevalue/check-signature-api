@@ -9,8 +9,7 @@
 |
 */
 
-import router from '@adonisjs/core/services/router'
-import server from '@adonisjs/core/services/server'
+import Server from '@ioc:Adonis/Core/Server'
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +20,8 @@ import server from '@adonisjs/core/services/server'
 | are defined for every HTTP requests.
 |
 */
-server.use([
-  () => import('@adonisjs/core/bodyparser_middleware'),
+Server.middleware.register([
+  () => import('@ioc:Adonis/Core/BodyParser'),
 ])
 
 /*
@@ -41,5 +40,5 @@ server.use([
 | Route.get('dashboard', 'UserController.dashboard').middleware('auth')
 |
 */
-router.named({
+Server.middleware.registerNamed({
 })

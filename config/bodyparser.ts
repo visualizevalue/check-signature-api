@@ -5,9 +5,9 @@
  * file.
  */
 
-import { defineConfig } from '@adonisjs/bodyparser'
+import type { BodyParserConfig } from '@ioc:Adonis/Core/BodyParser'
 
-export default defineConfig({
+const bodyParserConfig: BodyParserConfig = {
   /*
   |--------------------------------------------------------------------------
   | White listed methods
@@ -202,8 +202,10 @@ export default defineConfig({
     | The types that will be considered and parsed as multipart body.
     |
     */
-    types: [
-      'multipart/form-data',
-    ],
+    // This JSON API has no upload endpoints. Keep the unsupported multipart
+    // parser disabled while AdonisJS 5 is maintained.
+    types: [],
   },
-})
+}
+
+export default bodyParserConfig

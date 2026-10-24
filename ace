@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 |--------------------------------------------------------------------------
 | Ace Commands
@@ -7,10 +9,11 @@
 |
 */
 
-require('reflect-metadata')
-require('source-map-support').install({ handleUncaughtExceptions: false })
+import 'reflect-metadata'
+import { Ignitor } from '@adonisjs/core'
 
-const { Ignitor } = require('@adonisjs/core/build/standalone')
-new Ignitor(__dirname)
+const ignitor = new Ignitor(new URL('./', import.meta.url))
+
+ignitor
   .ace()
   .handle(process.argv.slice(2))
